@@ -73,5 +73,3 @@ def push_data_to_redshift(order_data, table_name):
     con.commit()
     con.close()
 
-
-print(get_creds('redshift'))
