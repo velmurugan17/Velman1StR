@@ -3,6 +3,10 @@ from lib import create_table, push_data_to_redshift, get_creds
 
 
 def get_order_data_from_shopify():
+    """
+    Get orders from shopify and returns
+    :return:Orders dictionary object
+    """
     try:
         shopify_cred = get_creds('shopify')
         url, api_key, pwd = shopify_cred['store_url'], shopify_cred['api_key'], shopify_cred['password']
@@ -17,6 +21,10 @@ def get_order_data_from_shopify():
 
 
 def data_processor(ord_data):
+    """
+    Processes input dataset and generates data models with date,count,net and gross
+    :return: Parsed order data model dictionary
+    """
     orders_to_redshift = {}
     for ord in ord_data:
         created_date = ord['created_at'].split('T')[0]
