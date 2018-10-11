@@ -1,3 +1,7 @@
+"""
+This lib contains the interface to redshift.mainly to push some dictionary data into redshift cluster database
+"""
+
 import psycopg2
 import json
 
@@ -32,12 +36,21 @@ required_data = ['id', 'created_at', 'total_price', 'subtotal_price', 'total_tax
 
 
 def get_creds(type):
+  """
+  Collects the credentials from user config file and returns either shopify or redshift credentials
+  :parameter: Type either shopify or redshift
+  :return: Dict of credentials
+  """
     with open('user.config') as f:
         data = json.load(f)
     return data[type]
 
 
 def create_table(table_name):
+    """
+    Creates a table in redshift database
+    :parameter: table_name name of the table
+    """
     red_shift_cred = get_creds('redshift')
     db_name, host, usr, pwd, port = red_shift_cred['db_name'], red_shift_cred['host'], red_shift_cred['user'], \
                                     red_shift_cred['password'], red_shift_cred['port']
@@ -49,6 +62,12 @@ def create_table(table_name):
 
 
 def get_insert_query(table_name, order, keys=required_data):
+    """
+    generates a query string to send to redshift table
+    :parameter: table_name :name of the table where you want to insert
+                order : datamodel that needs to placed in redshift
+                keys : list of fiels that needs to be files
+    """
     columns = ', '.join(keys)
     values = "'" + "', '".join([str(order[k]) for k in keys]) + "'"
     qry = 'insert into %s (%s) Values (%s);' % (table_name, columns, values)
@@ -58,8 +77,9 @@ def get_insert_query(table_name, order, keys=required_data):
 
 def push_data_to_redshift(order_data, table_name):
     """
-    In progress
-    :param odr_parse_result:
+    Generates query with get_insert_query and pushes to redshift
+    :param :order_data : order data generated from redshift
+            table_name : name of table
     :return:
     """
     red_shift_cred = get_creds('redshift')
